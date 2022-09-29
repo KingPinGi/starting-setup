@@ -1,32 +1,41 @@
 import ExpenseItem from "./ExpenseItem";
-import './Expenses.css';
-import Card from '../UI/Card.js'
+import "./Expenses.css";
+import ExpensesFilter from "./ExpensesFilter";
+import Card from "../UI/Card.js";
+import { useState } from "react";
+
 const Expenses = (props) => {
-    return (
-        <Card className="expenses">
-            <ExpensesFilter selected={filteredYear} onChangeFilter={filterChangeHandler} />
-            <ExpenseItem
-                title={props.items[0].title}
-                amount={props.items[0].amount}
-                date={props.items[0].date}
-            />
-            <ExpenseItem
-                title={props.items[1].title}
-                amount={props.items[1].amount}
-                date={props.items[1].date}
-            />
-            <ExpenseItem
-                title={props.items[2].title}
-                amount={props.items[2].amount}
-                date={props.items[2].date}
-            />
-            <ExpenseItem
-                title={props.items[3].title}
-                amount={props.items[3].amount}
-                date={props.items[3].date}
-            />
-        </Card>
-    )
+  const [filteredYear, setFilteredYear] = useState("2020");
+  const filterChangeHandler = (selectedYear) => {
+    setFilteredYear(selectedYear);
+  };
+  const filteredExpense = props.items.filter((expense) => {
+    console.log(expense.date.getFullYear());
+    return expense.date.getFullYear().toString() === filteredYear;
+  });
+
+  let expensesContent = <p>No expenses found.</p>;
+
+  if (filteredExpense.length > 0) {
+    expensesContent = filteredExpense.map((expense) => (
+      <ExpenseItem
+        key={expense.id}
+        title={expense.title}
+        amount={expense.amount}
+        date={expense.date}
+      />
+    ));
+  }
+
+  return (
+    <Card className="expenses">
+      <ExpensesFilter
+        selected={filteredYear}
+        onChangeFilter={filterChangeHandler}
+      />
+      {expensesContent}
+    </Card>
+  );
 };
 
 export default Expenses;
